@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from .config import Config
 from .db import init_db
+from .routes.tasks import tasks_bp
 
 
 def create_app() -> Flask:
@@ -12,8 +13,9 @@ def create_app() -> Flask:
     CORS(app, resources={"/api/*": {"origins": "*"}})
 
     init_db(app)
+    app.register_blueprint(tasks_bp)
 
-    @app.get("/api/health")
+    @app.route("/api/health", methods=["GET"])
     def health():
         return {"status": "ok"}
 
