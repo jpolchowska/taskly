@@ -216,3 +216,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Node.js / Next.js (frontend)
+node_modules/
+.next/
+out/
+frontend/.env*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+next-env.d.ts
+*.tsbuildinfo
+
+# Mongo local data (if ever bind-mounted instead of a named volume)
+mongo_data/
