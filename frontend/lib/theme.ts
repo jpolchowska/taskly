@@ -29,4 +29,23 @@ export function applyTheme(theme: Theme): void {
 export function applyAccent(accent: AccentColor): void {
   document.documentElement.style.setProperty("--brand", accent);
   localStorage.setItem(ACCENT_STORAGE_KEY, accent);
+  applyFavicon(accent);
+}
+
+// Mirrors the checkmark mark baked into app/icon.svg, recolored to the
+// active accent so the browser tab matches whatever the user picked.
+function faviconSvg(accent: AccentColor): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="${accent}"/><path d="M9 16.5l4.5 4.5L23 11" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+}
+
+// Next.js renders app/icon.svg's <link rel="icon"> as part of its own
+// metadata tree, and re-asserts its original href on hydration — so this
+// writes to a second, React-untouched link instead of fighting that one.
+export function applyFavicon(accent: AccentColor): void {
+  const link =
+    document.querySelector<HTMLLinkElement>("link[data-accent-icon]") ??
+    document.head.appendChild(document.createElement("link"));
+  link.rel = "icon";
+  link.setAttribute("data-accent-icon", "");
+  link.href = `data:image/svg+xml,${encodeURIComponent(faviconSvg(accent))}`;
 }
