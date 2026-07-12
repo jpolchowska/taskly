@@ -1,9 +1,17 @@
-interface QuoteCardProps {
-  text: string;
-  author: string;
-}
+"use client";
 
-export function QuoteCard({ text, author }: QuoteCardProps) {
+import { useEffect, useState } from "react";
+import { getRandomQuote, type Quote } from "@/lib/api";
+
+export function QuoteCard() {
+  const [quote, setQuote] = useState<Quote | null>(null);
+
+  useEffect(() => {
+    getRandomQuote()
+      .then(setQuote)
+      .catch(() => setQuote(null));
+  }, []);
+
   return (
     <div className="relative mb-10 overflow-hidden rounded-[20px] bg-brand-wash px-12 py-9 text-center shadow-(--shadow-card)">
       <div
@@ -12,11 +20,11 @@ export function QuoteCard({ text, author }: QuoteCardProps) {
       >
         “
       </div>
-      <p className="relative mx-auto max-w-155 font-serif text-[22px] leading-relaxed italic text-foreground">
-        “{text}”
+      <p className="relative mx-auto min-h-[33px] max-w-155 font-serif text-[22px] leading-relaxed italic text-foreground">
+        {quote ? `“${quote.text}”` : " "}
       </p>
       <div className="relative mt-3.5 text-[13px] font-medium tracking-wide text-muted-foreground">
-        — {author}
+        {quote ? `— ${quote.author}` : " "}
       </div>
     </div>
   );

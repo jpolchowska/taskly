@@ -2,6 +2,12 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { getCategoryColor } from "@/lib/categories";
 import { DragHandleIcon, MenuDotsIcon } from "./icons";
 
@@ -9,9 +15,10 @@ interface TaskCardProps {
   id: string;
   title: string;
   category: string;
+  onDelete?: () => void;
 }
 
-export function TaskCard({ id, title, category }: TaskCardProps) {
+export function TaskCard({ id, title, category, onDelete }: TaskCardProps) {
   const color = getCategoryColor(category);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
@@ -44,13 +51,24 @@ export function TaskCard({ id, title, category }: TaskCardProps) {
         </div>
       </div>
 
-      <button
-        type="button"
-        aria-label="Task menu"
-        className="shrink-0 rounded-lg p-1.5 text-muted-foreground hover:bg-muted"
-      >
-        <MenuDotsIcon />
-      </button>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <button
+              type="button"
+              aria-label="Task menu"
+              className="shrink-0 rounded-lg p-1.5 text-muted-foreground hover:bg-muted"
+            >
+              <MenuDotsIcon />
+            </button>
+          }
+        />
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem variant="destructive" onClick={onDelete}>
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

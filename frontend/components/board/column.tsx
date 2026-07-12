@@ -2,22 +2,19 @@
 
 import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import type { Status, Task } from "@/lib/api";
+import { AddTaskDialog } from "./add-task-dialog";
 import { TaskCard } from "./task-card";
 
-interface Task {
-  id: string;
-  title: string;
-  category: string;
-}
-
 interface ColumnProps {
-  id: string;
+  id: Status;
   title: string;
   tasks: Task[];
-  onAddTask?: () => void;
+  onAddTask: (data: { title: string; category: string; status: Status }) => Promise<void>;
+  onDeleteTask: (id: string) => void;
 }
 
-export function Column({ id, title, tasks, onAddTask }: ColumnProps) {
+export function Column({ id, title, tasks, onAddTask, onDeleteTask }: ColumnProps) {
   const { setNodeRef } = useDroppable({ id });
   const taskIds = tasks.map((task) => task.id);
 
@@ -34,18 +31,31 @@ export function Column({ id, title, tasks, onAddTask }: ColumnProps) {
               Nothing here yet
             </div>
           ) : (
-            tasks.map((task) => <TaskCard key={task.id} id={task.id} title={task.title} category={task.category} />)
+            tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                id={task.id}
+                title={task.title}
+                category={task.category}
+                onDelete={() => onDeleteTask(task.id)}
+              />
+            ))
           )}
         </SortableContext>
       </div>
 
-      <button
-        type="button"
-        onClick={onAddTask}
-        className="flex items-center justify-center gap-1.5 rounded-2xl border-[1.5px] border-dashed border-border px-3.5 py-2.75 text-[13.5px] font-medium text-muted-foreground transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand"
-      >
-        <span className="text-[15px] font-semibold">+</span> Add task
-      </button>
+      <AddTaskDialog
+        status={id}
+        onAdd={onAddTask}
+        trigger={
+          <button
+            type="button"
+            className="flex items-center justify-center gap-1.5 rounded-2xl border-[1.5px] border-dashed border-border px-3.5 py-2.75 text-[13.5px] font-medium text-muted-foreground transition-colors hover:border-brand hover:bg-brand-soft hover:text-brand"
+          >
+            <span className="text-[15px] font-semibold">+</span> Add task
+          </button>
+        }
+      />
     </div>
   );
 }
