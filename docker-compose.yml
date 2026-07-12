@@ -10,6 +10,26 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  backend:
+    build: ./backend
+    container_name: taskly-backend
+    restart: unless-stopped
+    depends_on:
+      - database
+    environment:
+      MONGO_URI: mongodb://database:27017/taskly
+    ports:
+      - "5001:5001"
+
+  frontend:
+    build: ./frontend
+    container_name: taskly-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+
 volumes:
   mongo-data:
     name: taskly-mongo-data
